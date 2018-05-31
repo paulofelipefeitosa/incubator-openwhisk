@@ -18,7 +18,7 @@ chmod +x /usr/bin/docker && \
 chmod +x /usr/bin/docker-runc
 
 # Install kubernetes client
-RUN wget --no-verbose https://storage.googleapis.com/kubernetes-release/release/v${KUBERNETES_VERSION}/bin/linux/amd64/kubectl && \
+RUN wget --no-verbose http://storage.googleapis.com/kubernetes-release/release/v${KUBERNETES_VERSION}/bin/linux/amd64/kubectl && \
 chmod +x kubectl && \
 mv kubectl /usr/bin/kubectl
 
