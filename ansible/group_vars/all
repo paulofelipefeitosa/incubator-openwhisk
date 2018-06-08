@@ -154,8 +154,8 @@ invoker:
   port: 12001
   heap: "{{ invoker_heap | default('2g') }}"
   arguments: "{{ invoker_arguments | default('') }}"
-  numcore: 2
-  coreshare: 2
+  numcore: "{{ invoker_num_core | default(2) }}"
+  coreshare: "{{ invoker_core_share | default(2) }}"
   busyThreshold: "{{ invoker_busy_threshold | default(16) }}"
   instances: "{{ groups['invokers'] | length }}"
   # Specify if it is allowed to deploy more than 1 invoker on a single machine.
