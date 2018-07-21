@@ -33,5 +33,5 @@ kafkas
 [invokers]
 10.22.22.111            ansible_host=10.22.22.111
 
-[suess]
+[seuss_invokers]
 10.22.22.114            ansible_host=10.22.22.114
