@@ -1,14 +1,31 @@
 # Licensed to the Apache Software Foundation (ASF) under one or more contributor
 # license agreements; and to You under the Apache License, Version 2.0.
 ---
-# This role installs seuss invokers.
+# This role installs seuss_invokers.
+#
 
-- name: prepare seuss invoker env
+#- name: pull seuss_invoker docker image 
+#  shell: "docker pull ebbrt/seuss"
+
+- name: prepare seuss_invoker env
   set_fact:
     env:
-      "PORT": 8080
+      "CONFIG_logback_log_level": "{{ invoker.loglevel }}"
+      "CONFIG_whisk_couchdb_host": "{{ db_host }}"
+      "CONFIG_whisk_couchdb_password": "{{ db_password }}"
+      "CONFIG_whisk_couchdb_port": "{{ db_port }}"
+      "CONFIG_whisk_couchdb_protocol": "{{ db_protocol }}"
+      "CONFIG_whisk_couchdb_provider": "{{ db_provider }}"
+      "CONFIG_whisk_couchdb_username": "{{ db_username }}"
+      "INVOKER_NAME": "{{ groups['seuss_invokers'].index(inventory_hostname) }}"
       "KAFKA_HOSTS": "{{ kafka_connect_string }}"
-      "CONFIG_whisk_kafka_replicationFactor": "{{ kafka.replicationFactor | default() }}"
+      "PORT": 8080
+      "WHISK_API_HOST_NAME": "{{ whisk_api_host_name | default(groups['edge'] | first) }}"
+      "WHISK_API_HOST_PORT": "{{ whisk_api_host_port | default('443') }}"
+      "WHISK_API_HOST_PROTO": "{{ whisk_api_host_proto | default('https') }}"
+      "ZOOKEEPER_HOSTS": "{{ zookeeper_connect_string }}"
+#
+#      "CONFIG_whisk_kafka_replicationFactor": "{{ kafka.replicationFactor | default() }}"
 #      "CONFIG_whisk_kafka_topics_invoker_retentionBytes": "{{ kafka_topics_invoker_retentionBytes | default() }}"
 #      "CONFIG_whisk_kafka_topics_invoker_retentionMs": "{{ kafka_topics_invoker_retentionMS | default() }}"
 #      "CONFIG_whisk_kakfa_topics_invoker_segmentBytes": "{{ kafka_topics_invoker_segmentBytes | default() }}"
@@ -61,27 +78,37 @@
 #      "CONFIG_whisk_timeLimit_std": "{{ limit_action_time_std | default() }}"
 #      "CONFIG_whisk_activation_payload_max": "{{ limit_activation_payload | default() }}"
 #      "CONFIG_whisk_transactions_header": "{{ transactions.header }}"
+#
+- name: prepare seuss_invoker ports
+  set_fact:
+    ports_to_expose: ["{{ invoker.port + groups['seuss_invokers'].index(inventory_hostname) }}:8080"]
 
-- name: Start suess invoker
-  shell: "echo START SUESS"
+- name: set invoker volumes
+  set_fact:
+    volumes: "/sys/fs/cgroup:/sys/fs/cgroup,/run/runc:/run/runc,\
+      {{ whisk_logs_dir }}/seuss_invoker{{ groups['seuss_invokers'].index(inventory_hostname) }}:/logs,\
+      {{ invoker.confdir }}/seuss_invoker{{ groups['seuss_invokers'].index(inventory_hostname) }}:/conf,\
+      {{ docker_sock | default('/var/run/docker.sock') }}:/var/run/docker.sock"
 
-#- name: start invoker using docker cli
-#  docker_container:
-#    userns_mode: "host"
-#    pid_mode: "host"
-#    privileged: "yes"
-#    name: invoker{{ groups['invokers'].index(inventory_hostname) }}
-#    hostname: "invoker{{ groups['invokers'].index(inventory_hostname) }}"
-#    restart_policy: "{{ docker.restart.policy }}"
-#    image: "{{ docker_registry }}{{ docker.image.prefix }}/invoker:{{ docker.image.tag }}"
-#    state: started
-#    recreate: true
-#    env: "{{ env }}"
-#    volumes: "{{ volumes }}"
-#    ports: "{{ ports_to_expose }}"
-#    command: /bin/sh -c "exec /init.sh {{ groups['invokers'].index(inventory_hostname) }} >> /logs/invoker{{ groups['invokers'].index(inventory_hostname) }}_logs.log 2>&1"
+- name: start seuss_invoker using docker cli
+  docker_container:
+    userns_mode: "host"
+    pid_mode: "host"
+    privileged: "yes"
+    name: seuss_invoker{{ groups['seuss_invokers'].index(inventory_hostname) }}
+    hostname: "seuss_invoker{{ groups['seuss_invokers'].index(inventory_hostname) }}"
+    restart_policy: "{{ docker.restart.policy }}"
+    image: "ebbrt/seuss"
+    state: started
+    recreate: true
+    env: "{{ env }}"
+    volumes: "{{ volumes }}"
+    ports: "{{ ports_to_expose }}"
+    command: /bin/sh -c "exec /root/seuss/seuss -z $ZOOKEEPER_HOSTS -k $KAFKA_HOSTS -t $INVOKER_NAME -p $PORT >> /logs/seuss_invoker{{ groups['seuss_invokers'].index(inventory_hostname) }}_logs.log 2>&1"
+
 #- name: wait until Invoker is up and running
 #  uri:
+#
 #    url: "http://{{ ansible_host }}:{{ invoker.port + groups['invokers'].index(inventory_hostname) }}/ping"
 #  register: result
 #  until: result.status == 200
