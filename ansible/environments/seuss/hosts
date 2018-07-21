@@ -1,0 +1,37 @@
+; the first parameter in a host is the inventory_hostname
+
+; MOC kumo node values
+;10.22.22.100            ansible_host=10.22.22.100
+
+ansible ansible_connection=local
+
+
+[registry]
+10.22.22.100            ansible_host=10.22.22.100
+
+[edge]
+10.22.22.100            ansible_host=10.22.22.100
+
+[apigateway:children]
+edge
+
+[redis:children]
+edge
+
+[controllers]
+10.22.22.100            ansible_host=10.22.22.100
+
+[kafkas]
+10.22.22.100            ansible_host=10.22.22.100
+
+[zookeepers:children]
+kafkas
+
+[db]
+10.22.22.100            ansible_host=10.22.22.100
+
+[invokers]
+10.22.22.111            ansible_host=10.22.22.111
+
+[suess]
+10.22.22.114            ansible_host=10.22.22.114
