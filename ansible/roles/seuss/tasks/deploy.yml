@@ -104,13 +104,18 @@
     env: "{{ env }}"
     volumes: "{{ volumes }}"
     ports: "{{ ports_to_expose }}"
-    command: /bin/sh -c "exec /root/seuss/seuss -z $ZOOKEEPER_HOSTS -k $KAFKA_HOSTS -t $INVOKER_NAME -p $PORT >> /logs/seuss_invoker{{ groups['seuss_invokers'].index(inventory_hostname) }}_logs.log 2>&1"
+    command: /bin/sh -c "exec /root/seuss/seuss -z $ZOOKEEPER_HOSTS -k $KAFKA_HOSTS -t invoker$INVOKER_NAME -p $PORT >> /logs/seuss_invoker{{ groups['seuss_invokers'].index(inventory_hostname) }}_logs.log 2>&1"
 
 #- name: wait until Invoker is up and running
-#  uri:
-#
-#    url: "http://{{ ansible_host }}:{{ invoker.port + groups['invokers'].index(inventory_hostname) }}/ping"
+#  url: "http://{{ ansible_host }}:{{ invoker.port + groups['invokers'].index(inventory_hostname) }}/ping"
 #  register: result
 #  until: result.status == 200
 #  retries: 12
+#  delay: 5
+
+#- name: wait until the kafka server started up
+#  shell: docker logs kafka{{ groups['kafkas'].index(inventory_hostname) }}
+#  register: result
+#  until: (('[Kafka Server ' + (groups['kafkas'].index(inventory_hostname)|string) + '], started') in result.stdout)
+#  retries: 10
 #  delay: 5
