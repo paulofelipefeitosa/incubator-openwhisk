@@ -104,7 +104,7 @@
     env: "{{ env }}"
     volumes: "{{ volumes }}"
     ports: "{{ ports_to_expose }}"
-    command: /bin/sh -c "exec /root/seuss/seuss -z $ZOOKEEPER_HOSTS -k $KAFKA_HOSTS -t $INVOKER_NAME -p $PORT --db_host $CONFIG_whisk_couchdb_host --db_password $CONFIG_whisk_couchdb_password --db_port $CONFIG_whisk_couchdb_port --db_protocol $CONFIG_whisk_couchdb_protocol --db_provider $CONFIG_whisk_couchdb_provider --db_username $CONFIG_whisk_couchdb_username >> /logs/seuss_invoker{{ groups['seuss_invokers'].index(inventory_hostname) }}_logs.log 2>&1"
+    command: /bin/sh -c "exec /root/seuss/seuss -b seuss.elf32 -n 1 -z $ZOOKEEPER_HOSTS -k $KAFKA_HOSTS -t $INVOKER_NAME --db_host $CONFIG_whisk_couchdb_host --db_password $CONFIG_whisk_couchdb_password --db_port $CONFIG_whisk_couchdb_port --db_protocol $CONFIG_whisk_couchdb_protocol --db_provider $CONFIG_whisk_couchdb_provider --db_username $CONFIG_whisk_couchdb_username >> /logs/seuss_invoker{{ groups['seuss_invokers'].index(inventory_hostname) }}_logs.log 2>&1"
 
 #- name: wait until Invoker is up and running
 #  url: "http://{{ ansible_host }}:{{ invoker.port + groups['invokers'].index(inventory_hostname) }}/ping"

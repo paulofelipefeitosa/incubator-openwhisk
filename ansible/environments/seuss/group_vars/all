@@ -3,7 +3,7 @@
 
 ---
 
-whisk_loglevel: debug
+whisk_loglevel: info
 invoker_use_runc: false 
 
 db_provider: CouchDB
