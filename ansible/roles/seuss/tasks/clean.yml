@@ -5,7 +5,7 @@
 
 - name: remove seuss_invoker
   docker_container:
-    name: "invoker{{ groups['seuss_invokers'].index(inventory_hostname) }}"
+    name: "seuss_invoker{{ groups['seuss_invokers'].index(inventory_hostname) }}"
     image: "ebbrt/seuss"
     state: absent
     stop_timeout: 60
