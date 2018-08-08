@@ -24,6 +24,9 @@
       "WHISK_API_HOST_PORT": "{{ whisk_api_host_port | default('443') }}"
       "WHISK_API_HOST_PROTO": "{{ whisk_api_host_proto | default('https') }}"
       "ZOOKEEPER_HOSTS": "{{ zookeeper_connect_string }}"
+      "EBBRT_NODE_ALLOCATOR_CUSTOM_NETWORK_IP_CMD" : "ip addr show eth0 | grep 'inet ' | cut -d ' ' -f 6 #"
+      "EBBRT_NODE_ALLOCATOR_CUSTOM_NETWORK_CREATE_CMD" : "echo bridge"
+      "EBBRT_NODE_ALLOCATOR_CUSTOM_NETWORK_REMOVE_CMD" : "true"
 #
 #      "CONFIG_whisk_kafka_replicationFactor": "{{ kafka.replicationFactor | default() }}"
 #      "CONFIG_whisk_kafka_topics_invoker_retentionBytes": "{{ kafka_topics_invoker_retentionBytes | default() }}"
@@ -100,7 +103,7 @@
     restart_policy: "{{ docker.restart.policy }}"
     image: "ebbrt/seuss"
     state: started
-    recreate: true
+    recreate: false
     env: "{{ env }}"
     volumes: "{{ volumes }}"
     ports: "{{ ports_to_expose }}"
