@@ -37,3 +37,14 @@ kafka_topics_invoker_retentionBytes: 104857600
 kafka_topics_invoker_retentionMS: 300000
 
 env_hosts_dir: "{{ playbook_dir }}/environments/local"
+
+controller_protocol: "http"
+
+limit_timeout: 50000
+limit_invocations_per_minute: 600
+limit_invocations_concurrent: 4 
+limit_invocations_concurrent_system: 32
+limit_fires_per_minute: 600
+invoker_num_core: 2 # maxActiveContainers = numCore * coreShare
+invoker_core_share: 4
+invoker_use_runc: false 
