@@ -3,6 +3,6 @@
 ---
 # This playbook deploys Openwhisk Invokers.
 
-- hosts: seuss_invokers
+- hosts: invokers
   roles:
   - seuss

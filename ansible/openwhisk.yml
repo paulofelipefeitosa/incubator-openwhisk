@@ -9,9 +9,7 @@
 
 - import_playbook: controller.yml
 
-- import_playbook: seuss.yml
-
-#- import_playbook: invoker.yml
+- import_playbook: invoker.yml
 
 - import_playbook: edge.yml
 

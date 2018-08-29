@@ -17,7 +17,10 @@
       "CONFIG_whisk_couchdb_protocol": "{{ db_protocol }}"
       "CONFIG_whisk_couchdb_provider": "{{ db_provider }}"
       "CONFIG_whisk_couchdb_username": "{{ db_username }}"
-      "INVOKER_NAME": "{{ groups['seuss_invokers'].index(inventory_hostname) }}"
+      "CONFIG_whisk_couchdb_databases_WhiskAuth": "{{ db.whisk.auth }}"
+      "CONFIG_whisk_couchdb_databases_WhiskEntity": "{{ db.whisk.actions }}"
+      "CONFIG_whisk_couchdb_databases_WhiskActivation": "{{ db.whisk.activations }}"
+      "INVOKER_NAME": "{{ groups['invokers'].index(inventory_hostname) }}"
       "KAFKA_HOSTS": "{{ kafka_connect_string }}"
       "PORT": 8080
       "WHISK_API_HOST_NAME": "{{ whisk_api_host_name | default(groups['edge'] | first) }}"
@@ -84,13 +87,13 @@
 #
 - name: prepare seuss_invoker ports
   set_fact:
-    ports_to_expose: ["{{ invoker.port + groups['seuss_invokers'].index(inventory_hostname) }}:8080"]
+    ports_to_expose: ["{{ invoker.port + groups['invokers'].index(inventory_hostname) }}:8080"]
 
 - name: set invoker volumes
   set_fact:
     volumes: "/sys/fs/cgroup:/sys/fs/cgroup,/run/runc:/run/runc,\
-      {{ whisk_logs_dir }}/seuss_invoker{{ groups['seuss_invokers'].index(inventory_hostname) }}:/logs,\
-      {{ invoker.confdir }}/seuss_invoker{{ groups['seuss_invokers'].index(inventory_hostname) }}:/conf,\
+      {{ whisk_logs_dir }}/seuss_invoker{{ groups['invokers'].index(inventory_hostname) }}:/logs,\
+      {{ invoker.confdir }}/seuss_invoker{{ groups['invokers'].index(inventory_hostname) }}:/conf,\
       {{ docker_sock | default('/var/run/docker.sock') }}:/var/run/docker.sock"
 
 - name: start seuss_invoker using docker cli
@@ -98,8 +101,8 @@
     userns_mode: "host"
     pid_mode: "host"
     privileged: "yes"
-    name: seuss_invoker{{ groups['seuss_invokers'].index(inventory_hostname) }}
-    hostname: "seuss_invoker{{ groups['seuss_invokers'].index(inventory_hostname) }}"
+    name: seuss_invoker{{ groups['invokers'].index(inventory_hostname) }}
+    hostname: "seuss_invoker{{ groups['invokers'].index(inventory_hostname) }}"
     restart_policy: "{{ docker.restart.policy }}"
     image: "ebbrt/seuss"
     state: started
@@ -107,7 +110,7 @@
     env: "{{ env }}"
     volumes: "{{ volumes }}"
     ports: "{{ ports_to_expose }}"
-    command: /bin/sh -c "exec /root/seuss/seuss -b seuss.elf32 -n 1 -z $ZOOKEEPER_HOSTS -k $KAFKA_HOSTS -t $INVOKER_NAME --db_host $CONFIG_whisk_couchdb_host --db_password $CONFIG_whisk_couchdb_password --db_port $CONFIG_whisk_couchdb_port --db_protocol $CONFIG_whisk_couchdb_protocol --db_provider $CONFIG_whisk_couchdb_provider --db_username $CONFIG_whisk_couchdb_username >> /logs/seuss_invoker{{ groups['seuss_invokers'].index(inventory_hostname) }}_logs.log 2>&1"
+    command: /bin/sh -c "exec /root/seuss/seuss -b seuss.elf32 -n 1 -z $ZOOKEEPER_HOSTS -k $KAFKA_HOSTS -t $INVOKER_NAME --couchdb_host $CONFIG_whisk_couchdb_host --couchdb_password $CONFIG_whisk_couchdb_password --couchdb_port $CONFIG_whisk_couchdb_port --couchdb_protocol $CONFIG_whisk_couchdb_protocol --couchdb_provider $CONFIG_whisk_couchdb_provider --couchdb_username $CONFIG_whisk_couchdb_username --couchdb_db_entity $CONFIG_whisk_couchdb_databases_WhiskEntity --couchdb_db_auth $CONFIG_whisk_couchdb_databases_WhiskAuth --couchdb_db_activation $CONFIG_whisk_couchdb_databases_WhiskActivation >> /logs/seuss_invoker{{ groups['invokers'].index(inventory_hostname) }}_logs.log 2>&1"
 
 #- name: wait until Invoker is up and running
 #  url: "http://{{ ansible_host }}:{{ invoker.port + groups['invokers'].index(inventory_hostname) }}/ping"

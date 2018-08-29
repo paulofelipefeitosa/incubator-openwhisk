@@ -5,4 +5,12 @@
 # It assumes you have already set up your database with the respective db provider playbook (currently cloudant.yml or couchdb.yml)
 # It assumes that wipe.yml have being deployed at least once
 
+- import_playbook: kafka.yml
+
+- import_playbook: controller.yml
+
 - import_playbook: seuss.yml
+
+- import_playbook: edge.yml
+
+- import_playbook: routemgmt.yml
