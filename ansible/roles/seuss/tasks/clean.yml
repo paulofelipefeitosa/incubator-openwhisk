@@ -5,9 +5,10 @@
 
 - name: remove seuss_invoker
   docker_container:
-    name: "seuss_invoker{{ groups['seuss_invokers'].index(inventory_hostname) }}"
+    name: "seuss_invoker{{ groups['invokers'].index(inventory_hostname) }}"
     image: "ebbrt/seuss"
     state: absent
-    stop_timeout: 60
-    timeout: 120
   ignore_errors: True
+
+- name: remove ebbrt containers
+  shell: /home/jmcadden/EbbRT/contrib/clean_running_apps.sh 1
