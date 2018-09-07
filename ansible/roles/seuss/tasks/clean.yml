@@ -11,4 +11,5 @@
   ignore_errors: True
 
 - name: remove ebbrt containers
-  shell: /home/jmcadden/EbbRT/contrib/clean_running_apps.sh 1
+  shell: docker ps | grep ebbrt-$(id -u) | cut -d ' ' -f 1 | while read id; do docker rm -f $id; done
+

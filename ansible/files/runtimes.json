@@ -16,7 +16,7 @@
                 },
                 "deprecated": false,
                 "stemCells": [{
-                    "count": 4,
+                    "count": 2,
                     "memory": "256 MB"
                 }]
             },
