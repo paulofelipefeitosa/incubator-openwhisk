@@ -8,7 +8,6 @@ whisk_logs_dir: "{{ openwhisk_tmp_dir }}/wsklogs"
 docker_registry: ""
 docker_dns: ""
 runtimes_bypass_pull_for_local_images: true
-invoker_use_runc: "{{ ansible_distribution != 'MacOSX' }}"
 
 db_prefix: whisk_local_
 
@@ -40,11 +39,10 @@ env_hosts_dir: "{{ playbook_dir }}/environments/local"
 
 controller_protocol: "http"
 
-limit_timeout: 50000
 limit_invocations_per_minute: 600
-limit_invocations_concurrent: 4 
-limit_invocations_concurrent_system: 32
-limit_fires_per_minute: 600
-invoker_num_core: 2 # maxActiveContainers = numCore * coreShare
-invoker_core_share: 4
+limit_invocations_concurrent: 1000
+limit_invocations_concurrent_system: 100000
+limit_fires_per_minute: 100000
+invoker_num_core: 3 # maxActiveContainers = numCore * coreShare
+invoker_core_share: 1
 invoker_use_runc: false 
