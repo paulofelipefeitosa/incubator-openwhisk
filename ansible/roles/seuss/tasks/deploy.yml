@@ -9,7 +9,8 @@
 
 - name: prepare seuss_invoker env
   set_fact:
-    env:
+    env:	
+      "EBBRT_NATIVE_CORES": "{{ invoker_num_core }}"
       "CONFIG_logback_log_level": "{{ invoker.loglevel }}"
       "CONFIG_whisk_couchdb_host": "{{ db_host }}"
       "CONFIG_whisk_couchdb_password": "{{ db_password }}"
@@ -110,7 +111,7 @@
     env: "{{ env }}"
     volumes: "{{ volumes }}"
     ports: "{{ ports_to_expose }}"
-    command: /bin/sh -c "exec /root/seuss/seuss -b seuss.elf32 -n 1 -z $ZOOKEEPER_HOSTS -k $KAFKA_HOSTS -t $INVOKER_NAME --couchdb_host $CONFIG_whisk_couchdb_host --couchdb_password $CONFIG_whisk_couchdb_password --couchdb_port $CONFIG_whisk_couchdb_port --couchdb_protocol $CONFIG_whisk_couchdb_protocol --couchdb_provider $CONFIG_whisk_couchdb_provider --couchdb_username $CONFIG_whisk_couchdb_username --couchdb_db_entity $CONFIG_whisk_couchdb_databases_WhiskEntity --couchdb_db_auth $CONFIG_whisk_couchdb_databases_WhiskAuth --couchdb_db_activation $CONFIG_whisk_couchdb_databases_WhiskActivation >> /logs/seuss_invoker{{ groups['invokers'].index(inventory_hostname) }}_logs.log 2>&1"
+    command: /bin/sh -c "exec /root/seuss/seuss -b seuss.elf32 -n 1 -c $EBBRT_NATIVE_CORES -z $ZOOKEEPER_HOSTS -k $KAFKA_HOSTS -t $INVOKER_NAME --couchdb_host $CONFIG_whisk_couchdb_host --couchdb_password $CONFIG_whisk_couchdb_password --couchdb_port $CONFIG_whisk_couchdb_port --couchdb_protocol $CONFIG_whisk_couchdb_protocol --couchdb_provider $CONFIG_whisk_couchdb_provider --couchdb_username $CONFIG_whisk_couchdb_username --couchdb_db_entity $CONFIG_whisk_couchdb_databases_WhiskEntity --couchdb_db_auth $CONFIG_whisk_couchdb_databases_WhiskAuth --couchdb_db_activation $CONFIG_whisk_couchdb_databases_WhiskActivation >> /logs/seuss_invoker{{ groups['invokers'].index(inventory_hostname) }}_logs.log 2>&1"
 
 #- name: wait until Invoker is up and running
 #  url: "http://{{ ansible_host }}:{{ invoker.port + groups['invokers'].index(inventory_hostname) }}/ping"
