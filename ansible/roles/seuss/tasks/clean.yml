@@ -11,5 +11,5 @@
   ignore_errors: True
 
 - name: remove ebbrt containers
-  shell: /bin/bash -c "docker ps | grep ebbrt-$(id -u) | cut -d ' ' -f 1 | while read id; do docker rm -f $id; done"
+  shell: /bin/bash -c "docker rm -f $(docker ps -q | paste -sd " " -)"
 
