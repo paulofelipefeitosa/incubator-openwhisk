@@ -16,10 +16,10 @@
                 },
                 "deprecated": false,
                 "stemCells": [{
-                    "count": 2,
+                    "count": 256,
                     "memory": "256 MB"
                 }]
-            },
+	    },
             {
                 "kind": "nodejs:8",
                 "default": false,
