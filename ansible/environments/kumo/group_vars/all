@@ -67,18 +67,13 @@ apigw_host_v2: "http://{{ groups['apigateway']|first }}:{{apigateway.port.api}}/
 
 invoker_heap: "4g"
 #invoker_allow_multiple_instances: false # Limits one invoker per machine
-invoker_uses_runc: true
-invoker_num_core: 256
-invoker_core_share: 1
 
 controller_protocol: "http"
-#limit_invocations_per_minute: 600
-#limit_invocations_concurrent: 32 # ???
-#limit_invocations_concurrent_system: 6666
-#limit_fires_per_minute: 60 # ???
+limit_invocations_per_minute: 999999
+limit_invocations_concurrent: 999999
+limit_invocations_concurrent_system: 999999
+limit_fires_per_minute: 999999
 
-limit_invocations_per_minute: 60000000
-limit_invocations_concurrent: 100000000
-limit_invocations_concurrent_system: 2147483646
-limit_fires_per_minute: 2147483646
-
+invoker_uses_runc: true
+invoker_core_share: 32
+invoker_num_core: 16
