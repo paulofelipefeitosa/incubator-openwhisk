@@ -24,8 +24,6 @@ apigw_auth_user: ""
 apigw_auth_pwd: ""
 apigw_host_v2: "http://{{ groups['apigateway']|first }}:{{apigateway.port.api}}/v2"
 
-invoker_allow_multiple_instances: true
-
 # Set kafka configuration
 kafka_heap: '512m'
 kafka_topics_completed_retentionBytes: 104857600
@@ -38,11 +36,20 @@ kafka_topics_invoker_retentionMS: 300000
 env_hosts_dir: "{{ playbook_dir }}/environments/local"
 
 controller_protocol: "http"
+limit_invocations_per_minute: 999999
+limit_invocations_concurrent: 999999
+limit_invocations_concurrent_system: 999999
+limit_fires_per_minute: 999999
 
-limit_invocations_per_minute: 600
-limit_invocations_concurrent: 1000
-limit_invocations_concurrent_system: 100000
-limit_fires_per_minute: 100000
-invoker_num_core: 1 # maxActiveContainers = numCore * coreShare
-invoker_core_share: 1
+whisk_loglevel: INFO
+
+invoker_allow_multiple_instances: true
+
 invoker_use_runc: false 
+
+seuss_native_memory: 16
+seuss_invoker_mode: "default" 
+seuss_invoker_delay: 0
+
+invoker_core_share: 1
+invoker_num_core: 4
