@@ -52,7 +52,7 @@ controller:
   dir:
     become: "{{ controller_dir_become | default(false) }}"
   confdir: "{{ config_root_dir }}/controller"
-  basePort: 10001
+  basePort: 443
   heap: "{{ controller_heap | default('2g') }}"
   arguments: "{{ controller_arguments | default('') }}"
   blackboxFraction: "{{ controller_blackbox_fraction | default(0.10) }}"
