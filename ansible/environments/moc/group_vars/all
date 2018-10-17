@@ -1,14 +1,14 @@
 # Licensed to the Apache Software Foundation (ASF) under one or more contributor
 # license agreements; and to You under the Apache License, Version 2.0.
 
-whisk_version_name: whisk_moc
+whisk_version_name: whisk_kumo
 config_root_dir: /tmp/wskconf
 whisk_logs_dir: /tmp/wsklogs
 registry_storage_dir: "/"
 docker_registry: ""
 docker_dns: ""
 
-db_prefix: whisk_moc
+db_prefix: whisk_kumo
 db_provider: CouchDB
 db_port: 5984
 db_protocol: http
