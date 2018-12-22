@@ -1,0 +1,83 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more contributor
+# license agreements; and to You under the Apache License, Version 2.0.
+
+whisk_version_name: whisk_kumo
+config_root_dir: /tmp/wskconf
+whisk_logs_dir: /tmp/wsklogs
+registry_storage_dir: "/"
+docker_registry: ""
+docker_dns: ""
+
+db_prefix: whisk_kumo
+db_provider: CouchDB
+db_port: 5984
+db_protocol: http
+db_username: couch_user
+db_password: couch_password
+db_host: "{{ groups['db'] | first }}"
+env_hosts_dir: "{{ playbook_dir }}/environments/kumo"
+
+registry:
+  version: 2.3.1
+  port: 5000
+  gencert: false
+  recycle:
+    threshold: 80
+    keeptags: 5
+
+instances:
+  - name: registry
+    num_instances: 1
+    flavor:
+
+  - name: edge
+    num_instances: 1
+    flavor:
+
+  - name: controllers
+    num_instances: 1
+    flavor:
+
+  - name: kafka
+    num_instances: 1
+    flavor:
+
+  - name: invokers
+    num_instances: 1
+    flavor:
+
+  - name: db
+    num_instances: 1
+    flavor:
+    volume:
+      name:
+      size:
+      fstype:
+      fsmount:
+
+# API GW connection configuration
+apigw_auth_user: ""
+apigw_auth_pwd: ""
+apigw_host_v2: "http://{{ groups['apigateway']|first }}:{{apigateway.port.api}}/v2"
+
+invoker_heap: "4g"
+
+controller_protocol: "http"
+limit_invocations_per_minute: 999999
+limit_invocations_concurrent: 999999
+limit_invocations_concurrent_system: 999999
+limit_fires_per_minute: 999999
+
+whisk_loglevel: INFO 
+
+invoker_allow_multiple_instances: true
+
+invoker_use_runc: false
+
+seuss_native_memory: 88 
+seuss_native_numa: 16
+seuss_invoker_mode: "default"
+seuss_invoker_delay: 0
+
+invoker_core_share: 32
+invoker_num_core: 16
